@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
   s.license = { :type => 'Commercial', :text => 'See http://www.heyzap.com/legal/terms' }
   s.author       = { "Heyzap" => "integration@heyzap.com" }
   s.social_media_url = 'https://twitter.com/heyzap'
-  s.source       = { :git => "https://github.com/Heyzap/Heyzap-Ads-SDK.git", :tag => "6.2.2" }
+  s.source       = { :git => "https://github.com/Heyzap/ios-advertiser-sdk.git", :tag => "6.2.2" }
 
   s.platform     = :ios
   s.requires_arc = true
