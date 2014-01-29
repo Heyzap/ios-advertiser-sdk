@@ -31,7 +31,9 @@
  */
 
 #import <Foundation/Foundation.h>
-
+/**
+ *  The level of logging the SDK should do.
+ */
 typedef enum {
     HZDebugLevelVerbose = 3,
     HZDebugLevelInfo = 2,
@@ -39,12 +41,22 @@ typedef enum {
     HZDebugLevelSilent = 0
 } HZDebugLevel;
 
+/**
+ *  A class Heyzap uses to log errors and information. You should only need to set the debugLevel 
+ @see setDebugLevel
+ */
 @interface HZLog : NSObject
+
+/**
+ *  The level of logging the SDK should do.
+ *
+ *  @param debugLevel The extent to which to log.
+ */
++ (void) setDebugLevel: (HZDebugLevel) debugLevel;
 
 + (void) info: (NSString *) message;
 + (void) error: (NSString *) message;
 + (void) debug: (NSString *) message;
-+ (void) setDebugLevel: (HZDebugLevel) debugLevel;
 
 
 @end

@@ -31,59 +31,78 @@
  */
 
 #import <Foundation/Foundation.h>
-/** Controller class for showing Heyzap's Video Ads. Typical users will only need to call the `show` method. */
+
+/** HZVideoAd is responsible for fetching and showing video ads. */
 @interface HZVideoAd : NSObject
 
 #pragma mark - Showing Ads
 
-/** Shows a video ad. */
+/** Shows a video ad if one is available */
 + (void) show;
 
-/** Shows a video ad.
- 
- @param tag A string identifying the context in which the ad was shown, e.g. "After level 1". In the future, Heyzap will breakdown ads data based on this value. */
+/**
+ *  Shows a video ad for a given tag, if available.
+ *
+ *  @param tag An identifier for the location of the ad which you can use to disable the ad from your dashboard.
+ */
 + (void) showForTag: (NSString *) tag;
 
-/** Shows a video ad.
- 
- @param tag A string identifying the context in which the ad was shown, e.g. "After level 1". In the future, Heyzap will breakdown ads data based on this value.
- @param completion Completion block
- `result` `YES` if there was an ad to show, otherwise `NO`.
- `error` `nil` if there was an ad to show. Otherwise, the error's `userInfo` dictionary will contain an explanation under the `NSLocalizedDescriptionKey`.
+/**
+ *  Shows a video for a given tag, if available.
+ *
+ *  @param tag        An identifier for the location of the ad which you can use to disable the ad from your dashboard.
+ *  @param completion A block called when the video is shown or fails to show. `result` states whether the show was sucessful; the error object describes the issue, if there was one.
  */
 + (void) showForTag:(NSString *)tag completion:(void (^)(BOOL result, NSError *error))completion;
 
-#pragma mark - Callbacks
 
-/** Sets the delegate to receive the messages listed in the `HZAdsDelegate` protocol.
- 
- @param delegate The object to receive the callbacks.
-
-#pragma mark - Manual Control of Ads
-
-// Typical users of the SDK won't need to call these methods. However, you may use them to achieve more fine-tuned control,
-// especially if you are using multiple ad networks and want to minimize unnecessary server requests.
-*/
-
-/** Fetches a new ad from Heyzap.  */
+/**
+ *  Fetches a video ad from Heyzap.
+ */
 + (void) fetch;
 
-/** Fetches a new ad from Heyzap with an optional completion handler */
+
+/**
+ *  Fetches a video ad from Heyzap.
+ *
+ *  @param completion A block called when the video is fetched or fails to fetch. `result` states whether the fetch was sucessful; the error object describes the issue, if there was one.
+ */
 + (void) fetchWithCompletion: (void (^)(BOOL result, NSError *error))completion;
 
-/** Fetches a new ad for a tag from Heyzap */
+/** Fetches a new ad for a tag from Heyzap.
+ @param tag An identifier for the location of the ad which you can use to disable the ad from your dashboard.
+ */
 + (void) fetchForTag: (NSString *) tag;
 
-/** Fetches a new ad for a tag from Heyzap with an optional completion handler */
+
+/**
+ *  Fetches a new ad for the given tag.
+ *
+ *  @param tag        An identifier for the location of the ad which you can use to disable the ad from your dashboard.
+ *  @param completion A block called when the video is fetched or fails to fetch. `result` states whether the fetch was sucessful; the error object describes the issue, if there was one.
+ *
+ */
 + (void) fetchForTag:(NSString *)tag withCompletion: (void (^)(BOOL result, NSError *error))completion;
 
-/** Whether or not an ad is available to show. */
+/**
+ *  Whether or not a video ad is ready to show
+ *
+ *  @return If the video is ready to show
+ */
 + (BOOL) isAvailable;
 
-/** Whether or not an ad with the particular tag is available to show. */
+/**
+ *  Whether or not the video is ready to show for the given tag
+ *
+ *  @param tag An identifier for the location of the ad which you can use to disable the ad from your dashboard.
+ *
+ *  @return Whether or not the video is ready to show for the given tag
+ */
 + (BOOL) isAvailableForTag: (NSString *) tag;
 
-/** Dismisses the current ad, if visible. If an ad has been fetched from the server, clears all data about that ad from memory. If auto-prefetching has not been turned off, this method also fetches a new ad. */
+/**
+ *  Dismisses the current ad, if visible.
+ */
 + (void) hide;
 
 # pragma mark - Testing;

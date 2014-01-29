@@ -34,7 +34,7 @@
 
 @protocol HZAdsDelegate;
 
-/** Controller class for showing Heyzap's Interstitial Ads. Typical users will only need to call the `show` method. */
+/** HZInterstitialAd is responsible for fetching and showing interstitial ads. */
 @interface HZInterstitialAd : NSObject
 
 #pragma mark - Showing Ads
@@ -42,17 +42,18 @@
 /** Shows an interstitial ad. */
 + (void) show;
 
-/** Shows an interstitial ad.
- 
- @param tag A string identifying the context in which the ad was shown, e.g. "After level 1". In the future, Heyzap will breakdown ads data based on this value. */
+/**
+ *  Shows an interstitial ad for a given tag, if available.
+ *
+ *  @param tag An identifier for the location of the ad which you can use to disable the ad from your dashboard.
+ */
 + (void) showForTag: (NSString *) tag;
 
-/** Shows an interstitial ad.
- 
- @param tag A string identifying the context in which the ad was shown, e.g. "After level 1". In the future, Heyzap will breakdown ads data based on this value.
- @param completion Completion block
- `result` `YES` if there was an ad to show, otherwise `NO`.
- `error` `nil` if there was an ad to show. Otherwise, the error's `userInfo` dictionary will contain an explanation under the `NSLocalizedDescriptionKey`.
+/**
+ *  Shows an interstitial ad for a given tag, if available.
+ *
+ *  @param tag        An identifier for the location of the ad which you can use to disable the ad from your dashboard.
+ *  @param completion A block called when the ad is shown or failed to show. result contains whether or not the fetch was successful, and if not, error contains the reason why.
  */
 + (void) showForTag:(NSString *)tag completion:(void (^)(BOOL result, NSError *error))completion;
 
@@ -64,29 +65,47 @@
  */
 + (void) setDelegate: (id<HZAdsDelegate>) delegate;
 
-#pragma mark - Manual Control of Ads
-
-// Typical users of the SDK won't need to call these methods. However, you may use them to achieve more fine-tuned control, especially if you are using multiple ad networks and want to minimize unnecessary server requests.
-
 /** Fetches a new ad from Heyzap.  */
 + (void) fetch;
 
-/** Fetches a new ad from Heyzap with an optional completion handler */
+/**
+ *  Fetches an interstitial ad with an optional completion handler
+ *
+ *  @param completion A block called when the ad is fetched or failed to fetch. result contains whether or not the fetch was successful, and if not, error contains the reason why.
+ */
 + (void) fetchWithCompletion: (void (^)(BOOL result, NSError *error))completion;
 
-/** Fetches a new ad for a tag from Heyzap */
+
+/**
+ *  Fetches an interstitial ad for the given tag.
+ *
+ *  @param tag An identifier for the location of the ad which you can use to disable the ad from your dashboard.
+ */
 + (void) fetchForTag: (NSString *) tag;
 
-/** Fetches a new ad for a tag from Heyzap with an optional completion handler */
+
+/**
+ *  Fetches an interstitial ad for the given tag with an optional completion handler
+ *
+ *  @param tag        An identifier for the location of the ad which you can use to disable the ad from your dashboard.
+ *  @param completion A block called when the ad is fetched or failed to fetch. result contains whether or not the fetch was successful, and if not, error contains the reason why.
+ */
 + (void) fetchForTag:(NSString *)tag withCompletion: (void (^)(BOOL result, NSError *error))completion;
 
 /** Whether or not an ad is available to show. */
 + (BOOL) isAvailable;
 
-/** Whether or not an ad with the particular tag is available to show. */
+
+/**
+ *  Whether or not an ad is available to show for the given tag.
+ *
+ *  @param tag An identifier for the location of the ad which you can use to disable the ad from your dashboard.
+ *
+ *  @return If the ad was available
+ */
 + (BOOL) isAvailableForTag: (NSString *) tag;
 
-/** Dismisses the current ad, if visible. If an ad has been fetched from the server, clears all data about that ad from memory. If auto-prefetching has not been turned off, this method also fetches a new ad. */
+/** Dismisses the current ad, if visible. */
 + (void) hide;
 
 
@@ -94,9 +113,6 @@
 
 + (void) setCreativeID:(int)creativeID;
 
-/** Private method
- @param options private
- */
 + (void)showAdWithOptions:(NSDictionary *)options;
 
 @end

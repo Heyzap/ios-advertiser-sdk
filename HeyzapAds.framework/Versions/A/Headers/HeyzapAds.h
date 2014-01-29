@@ -41,6 +41,7 @@
 #define NS_ENUM(_type, _name) enum _name : _type _name; enum _name : _type
 #endif
 
+
 typedef NS_ENUM(NSUInteger, HZAdOptions) {
     HZAdOptionsNone = 0 << 0,
     HZAdOptionsDisableAutoPrefetching = 1 << 0,
@@ -55,32 +56,57 @@ typedef NS_ENUM(NSUInteger, HZAdOptions) {
 
 #pragma mark - Showing ads callbacks
 
-/** Called when we succesfully show an ad. */
+/**
+ *  Called when we succesfully show an ad.
+ *
+ *  @param tag The identifier for the ad.
+ */
 - (void)didShowAdWithTag: (NSString *) tag;
 
-/** Called when `showAd` (or a variant) is called but we don't have an ad to show. Because we prefetch ads, this should be a rare occurence.
- @param error An `NSError` whose `userInfo` dictionary contains a description of the problem inside the `NSLocalizedDescriptionKey` key.
+/**
+ *  Called when an ad fails to show
+ *
+ *  @param tag   The identifier for the ad.
+ *  @param error An NSError describing the error
  */
 - (void)didFailToShowAdWithTag: (NSString *) tag andError: (NSError *)error;
 
-/** Called when we receive a valid ad from our server. */
+/**
+ *  Called when a valid ad is received
+ *
+ *  @param tag The identifier for the ad.
+ */
 - (void)didReceiveAdWithTag: (NSString *) tag;
-/** Called when our server fails to send a valid ad. This should be a rare occurence; only when our server returns invalid data or has a 500 error, etc. */
+
+/**
+ *  Called when our server fails to send a valid ad, like when there is a 500 error.
+ *
+ *  @param tag The identifier for the ad.
+ */
 - (void)didFailToReceiveAdWithTag: (NSString *) tag;
 
-/** Called when the user clicks on an ad. */
+/**
+ *  Called when the user clicks on an ad.
+ *
+ *  @param tag An identifier for the ad.
+ */
 - (void)didClickAdWithTag: (NSString *) tag;
-/** Called when the ad is dismissed. */
+
+/**
+ *  Called when the ad is dismissed.
+ *
+ *  @param tag An identifier for the ad.
+ */
 - (void)didHideAdWithTag: (NSString *) tag;
 
 @end
 
-/** The `HZIncentivizedAdDelegate` protocol provides global information about using an incentivized ad. If you want to give the user a reward
+/** The HZIncentivizedAdDelegate protocol provides global information about using an incentivized ad. If you want to give the user a reward
  after successfully finishing an incentivized ad, implement the didCompleteAd method */
-
 @protocol HZIncentivizedAdDelegate<NSObject>
 
 @optional
+
 /** Called when a user successfully completes viewing an ad */
 - (void)didCompleteAd;
 /** Called when a user does not complete the viewing of an ad */
@@ -88,15 +114,29 @@ typedef NS_ENUM(NSUInteger, HZAdOptions) {
 
 @end
 
+/**
+ *  A class with miscellaneous Heyzap Ads methods.
+ */
 @interface HeyzapAds : NSObject
+/**
+ *  Sets the object to receive HZAdsDelegate callbacks
+ *
+ *  @param delegate An object conforming to the HZAdsDelegate protocol
+ */
++ (void) setDelegate: (id<HZAdsDelegate>) delegate;
+
+/**
+ *  Sets the object to receive HZIncentivizedAdDelegate callbacks
+ *
+ *  @param delegate An object conforing to the HZIncentivizedAdDelegate protocol
+ */
++ (void) setIncentiveDelegate: (id<HZIncentivizedAdDelegate>) delegate;
 
 + (void) startWithAppStoreID: (int) appID andOptions: (HZAdOptions) options DEPRECATED_ATTRIBUTE;
 + (void) startWithOptions: (HZAdOptions) options DEPRECATED_ATTRIBUTE; //Only use this method if you are using the Social SDK.
 + (BOOL) isStarted;
 + (void) setDebugLevel:(HZDebugLevel)debugLevel;
 + (void) setDebug:(BOOL)choice;
-+ (void) setDelegate: (id<HZAdsDelegate>) delegate;
-+ (void) setIncentiveDelegate: (id<HZIncentivizedAdDelegate>) delegate;
 + (void) setOptions: (HZAdOptions)options;
 + (void) setFramework: (NSString *) framework;
 + (void) setMediator: (NSString *) mediator;
