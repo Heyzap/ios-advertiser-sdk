@@ -99,6 +99,16 @@ typedef NS_ENUM(NSUInteger, HZAdOptions) {
  */
 - (void)didHideAdWithTag: (NSString *) tag;
 
+/**
+ *  Called when an ad will use audio
+ */
+- (void)willStartAudio;
+
+/**
+ *  Called when an ad will finish using audio
+ */
+- (void) didFinishAudio;
+
 @end
 
 /** The HZIncentivizedAdDelegate protocol provides global information about using an incentivized ad. If you want to give the user a reward
