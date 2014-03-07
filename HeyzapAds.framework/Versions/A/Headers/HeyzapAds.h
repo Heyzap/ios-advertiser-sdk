@@ -46,7 +46,8 @@ typedef NS_ENUM(NSUInteger, HZAdOptions) {
     HZAdOptionsNone = 0 << 0,
     HZAdOptionsDisableAutoPrefetching = 1 << 0,
     HZAdOptionsAdvertiserOnly = 1 << 1,
-    HZAdOptionsAmazon = 1 << 2
+    HZAdOptionsAmazon = 1 << 2,
+    HZAdOptionsInstallTrackingOnly = 1 << 1,
 };
 
 /** The `HZAdsDelegate` protocol provides global information about our ads. If you want to know if we had an ad to show after calling `showAd` (for example, to fallback to another ads provider). It is recommend using the `showAd:completion:` method instead. */
@@ -143,7 +144,9 @@ typedef NS_ENUM(NSUInteger, HZAdOptions) {
 + (void) setIncentiveDelegate: (id<HZIncentivizedAdDelegate>) delegate;
 
 + (void) startWithAppStoreID: (int) appID andOptions: (HZAdOptions) options DEPRECATED_ATTRIBUTE;
-+ (void) startWithOptions: (HZAdOptions) options DEPRECATED_ATTRIBUTE; //Only use this method if you are using the Social SDK.
++ (void) startWithOptions:(HZAdOptions)options andFramework: (NSString *) framework;
++ (void) startWithOptions: (HZAdOptions) options; //Only use this method if you are using the Social SDK.
++ (void) start;
 + (BOOL) isStarted;
 + (void) setDebugLevel:(HZDebugLevel)debugLevel;
 + (void) setDebug:(BOOL)choice;
