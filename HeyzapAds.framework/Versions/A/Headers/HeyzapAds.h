@@ -37,11 +37,15 @@
 #import "HZVideoAd.h"
 #import "HZIncentivizedAd.h"
 
+#import "HZNativeAdController.h"
+#import "HZNativeAdCollection.h"
+#import "HZNativeAd.h"
+
 #ifndef NS_ENUM
 #define NS_ENUM(_type, _name) enum _name : _type _name; enum _name : _type
 #endif
 
-#define SDK_VERSION @"6.4.4"
+#define SDK_VERSION @"7.2.4"
 
 typedef NS_ENUM(NSUInteger, HZAdOptions) {
     HZAdOptionsNone = 0 << 0,
@@ -49,6 +53,10 @@ typedef NS_ENUM(NSUInteger, HZAdOptions) {
     HZAdOptionsAdvertiserOnly = 1 << 1,
     HZAdOptionsAmazon = 1 << 2,
     HZAdOptionsInstallTrackingOnly = 1 << 1,
+    /**
+     *  Pass this to disable mediation. This is not required, but is recommended for developers not using mediation. If you're mediating Heyzap through someone (e.g. AdMob), it is *strongly* recommended that you disable Heyzap's mediation to prevent any potential conflicts.
+     */
+    HZAdOptionsDisableMedation = 1 << 3,
 };
 
 /** The `HZAdsDelegate` protocol provides global information about our ads. If you want to know if we had an ad to show after calling `showAd` (for example, to fallback to another ads provider). It is recommend using the `showAd:completion:` method instead. */
@@ -115,14 +123,14 @@ typedef NS_ENUM(NSUInteger, HZAdOptions) {
 
 /** The HZIncentivizedAdDelegate protocol provides global information about using an incentivized ad. If you want to give the user a reward
  after successfully finishing an incentivized ad, implement the didCompleteAd method */
-@protocol HZIncentivizedAdDelegate<NSObject>
+@protocol HZIncentivizedAdDelegate<HZAdsDelegate>
 
 @optional
 
 /** Called when a user successfully completes viewing an ad */
-- (void)didCompleteAd;
+- (void)didCompleteAdWithTag: (NSString *) tag;
 /** Called when a user does not complete the viewing of an ad */
-- (void)didFailToCompleteAd;
+- (void)didFailToCompleteAdWithTag: (NSString *) tag;
 
 @end
 
@@ -130,24 +138,24 @@ typedef NS_ENUM(NSUInteger, HZAdOptions) {
  *  A class with miscellaneous Heyzap Ads methods.
  */
 @interface HeyzapAds : NSObject
-/**
- *  Sets the object to receive HZAdsDelegate callbacks
- *
- *  @param delegate An object conforming to the HZAdsDelegate protocol
- */
-+ (void) setDelegate: (id<HZAdsDelegate>) delegate;
 
 /**
  *  Sets the object to receive HZIncentivizedAdDelegate callbacks
  *
  *  @param delegate An object conforing to the HZIncentivizedAdDelegate protocol
  */
-+ (void) setIncentiveDelegate: (id<HZIncentivizedAdDelegate>) delegate;
++ (void) setIncentiveDelegate: (id<HZIncentivizedAdDelegate>) delegate __attribute__((deprecated("Call `HZIncentivizedAd setDelegate:` instead.")));
 
-+ (void) startWithAppStoreID: (int) appID andOptions: (HZAdOptions) options DEPRECATED_ATTRIBUTE;
-+ (void) startWithOptions:(HZAdOptions)options andFramework: (NSString *) framework;
-+ (void) startWithOptions: (HZAdOptions) options; //Only use this method if you are using the Social SDK.
-+ (void) start;
+
+/**
+ *
+ *
+ */
+
++ (void) startWithPublisherID: (NSString *) publisherID andOptions: (HZAdOptions) options;
++ (void) startWithPublisherID:(NSString *)publisherID andOptions:(HZAdOptions)options andFramework: (NSString *) framework;
++ (void) startWithPublisherID: (NSString *) publisherID;
+
 + (BOOL) isStarted;
 + (void) setDebugLevel:(HZDebugLevel)debugLevel;
 + (void) setDebug:(BOOL)choice;
@@ -155,5 +163,10 @@ typedef NS_ENUM(NSUInteger, HZAdOptions) {
 + (void) setFramework: (NSString *) framework;
 + (void) setMediator: (NSString *) mediator;
 + (NSString *) defaultTagName;
+
+/**
+ * Presents a view controller that displays integration information and allows fetch/show testing
+ */
++ (void)presentMediationDebugViewController;
 
 @end
