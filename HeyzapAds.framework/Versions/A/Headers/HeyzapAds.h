@@ -51,7 +51,7 @@
 #define NS_ENUM(_type, _name) enum _name : _type _name; enum _name : _type
 #endif
 
-#define SDK_VERSION @"8.4.1"
+#define SDK_VERSION @"9.0.6"
 
 #if __has_feature(objc_modules)
 @import AdSupport;
@@ -64,6 +64,8 @@
 @import MobileCoreServices;
 @import Security;
 @import SystemConfiguration;
+@import EventKit;
+@import EventKitUI;
 #endif
 
 typedef NS_ENUM(NSUInteger, HZAdOptions) {
@@ -76,6 +78,10 @@ typedef NS_ENUM(NSUInteger, HZAdOptions) {
      *  Pass this to disable mediation. This is not required, but is recommended for developers not using mediation. If you're mediating Heyzap through someone (e.g. AdMob), it is *strongly* recommended that you disable Heyzap's mediation to prevent any potential conflicts.
      */
     HZAdOptionsDisableMedation = 1 << 3,
+    /**
+     * Pass this to disable recording of In-App Purchase data
+     */
+    HZAdOptionsDisableAutomaticIAPRecording = 1 << 4,
 };
 
 
@@ -91,6 +97,7 @@ extern NSString * const HZNetworkAdColony;
 extern NSString * const HZNetworkAdMob;
 extern NSString * const HZNetworkIAd;
 extern NSString * const HZNetworkHyperMX;
+extern NSString * const HZNetworkHeyzapExchange;
 
 // General Network Callbacks
 extern NSString * const HZNetworkCallbackInitialized;
@@ -162,6 +169,12 @@ extern NSString * const HZRemoteDataRefreshedNotification;
  *  @param tag The identifier for the ad.
  */
 - (void)didFailToReceiveAdWithTag: (NSString *) tag;
+
+
+
+// Should probably have new API: didFailToReceiveAd (no tag)
+// didRecieveAd (no tag)
+
 
 /**
  *  Called when the user clicks on an ad.
@@ -252,6 +265,20 @@ extern NSString * const HZRemoteDataRefreshedNotification;
 + (void) setOptions: (HZAdOptions)options;
 + (void) setFramework: (NSString *) framework;
 + (void) setMediator: (NSString *) mediator;
+
+/**
+ *  Heyzap uses your app's bundle identifier to lookup your game in our database. By default, we lookup the bundle identifier from your Info.plist file.
+ *
+ *  If you need to use a different bundle identifier to identify your app than the one in the Info.plist file, you can call this method to override the bundle ID Heyzap uses. This supports use cases like having a different bundle ID in your Info.plist for production and development builds.
+ *
+ * You must call this method before starting the SDK.
+ *
+ *  @param bundleIdentifier The bundle identifier Heyzap should use to lookup your game in our database.
+ *
+ *  @exception NSInternalInconsistencyException is thrown if this method is called after starting the SDK.
+ *  @exception NSInternalInconsistencyException if bundleIdentifier is `nil`.
+ */
++ (void)setBundleIdentifier:(NSString *)bundleIdentifier;
 + (NSString *) defaultTagName;
 
 /**
@@ -287,5 +314,14 @@ extern NSString * const HZRemoteDataRefreshedNotification;
  *  @see pauseExpensiveWork
  */
 + (void)resumeExpensiveWork;
+
+#pragma mark - Record IAP Transaction
+
+/**
+ * Call this method to record an In-App Purchase made from the user. This will disable Ads for the time interval set in your game settings. 
+ *
+ * Only call this method if automatic IAP recording is disabled* (i.e. `HZAdOptionsDisableAutomaticIAPRecording` is enabled).
+ */
++ (void)onIAPPurchaseComplete:(NSString *)productId productName:(NSString *)productName price:(NSDecimalNumber *)price;
 
 @end
